@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Saver</title>
+  <link rel="stylesheet" type="text/css" href="static/css/style.css">
+</head>
+<body>
+  <h1>Enter URL</h1>
+  <form action="/" method="post">
+    <textarea name="text" rows="1" cols="100"></textarea>
+    <input type="submit" value="Download">
+  </form>
+  <br>
+  <h1>Available Videos:</h1>
+  <div class="video-container">
+    {% for video in video_list %}
+      <div class="video-item">
+        <video controls>
+          <source src="{{ url_for('static', filename='videos/' ~ video) }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="video-name"><a href="{{ url_for('static', filename='videos/' ~ video) }}" download>{{ video[:-4] }}</a></p>
+        <form action="{{ url_for('delete_file', filename=video) }}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+          <input type="submit" value="Delete">
+        </form>
+        <button onclick="openRenameModal('{{ video }}')">Rename</button>
+      </div>
+    {% endfor %}
+  </div>
+  <!-- Rename Modal -->
+  <div id="renameModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeRenameModal()">&times;</span>
+      <h2>Rename Video</h2>
+      <form action="{{ url_for('rename_file') }}" method="post">
+        <input type="hidden" id="oldNameInput" name="old_name">
+        <label for="newName">New name:</label>
+        <input type="text" id="newName" name="new_name" required>
+        <input type="submit" value="Rename">
+      </form>
+    </div>
+  </div>
+  <script src="static/js/scripts.js"></script>
+</body>
+</html>

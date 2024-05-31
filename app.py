@@ -1,10 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory
 import yt_dlp as youtube_dl
 import os
+import re
 
 app = Flask(__name__, static_folder='static')
 
-VIDEO_DIR = 'static/videos'
+VIDEO_DIR = 'download'
 
 def download_video(url, dir_path=VIDEO_DIR):
     try:
@@ -48,7 +49,12 @@ def index():
             return render_template('failure.html', error_msg = error_msg)
     else:
         video_list = [f for f in os.listdir(VIDEO_DIR) if f.endswith('.mp4')]
-        return render_template('index.html', video_list=video_list)
+        return render_template('index.html', video_list=video_list, VIDEO_DIR=VIDEO_DIR)
+
+
+@app.route('/'+ VIDEO_DIR + '/<path:filename>')
+def video(filename):
+    return send_from_directory(os.path.join(os.getcwd(), VIDEO_DIR), filename)
 
 
 @app.route('/delete/<filename>', methods=['POST'])
@@ -58,6 +64,7 @@ def delete_file(filename):
         os.remove(file_path)
         print(f"File '{filename}' deleted successfully.")
     return redirect(url_for('index'))
+
 
 @app.route('/rename', methods=['POST'])
 def rename_file():
@@ -69,8 +76,9 @@ def rename_file():
     if os.path.exists(old_file_path):
         if os.path.exists(new_file_path):
             print(f"File '{new_name}' already exists.")
-        #Not really needed since the field cannot be empty.
-        elif len(new_name)<1:
+        elif not re.match(r'^[A-Za-z0-9]', new_name):  # Check if the new name starts with a letter or digit
+            print(f"File name '{new_name}' does not start with a letter or digit.")
+        elif len(new_name)<1:  #Not really needed since the field cannot be empty.
             print(f"File name is too short")
         else:
             os.rename(old_file_path, new_file_path)

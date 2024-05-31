@@ -18,10 +18,10 @@
     {% for video in video_list %}
       <div class="video-item">
         <video controls>
-          <source src="{{ url_for('static', filename='videos/' ~ video) }}" type="video/mp4">
+          <source src="{{ url_for('video', filename=video) }}" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <p class="video-name"><a href="{{ url_for('static', filename='videos/' ~ video) }}" download>{{ video[:-4] }}</a></p>
+        <p class="video-name"><a href="{{ url_for('video', filename=video) }}" download>{{ video[:-4] }}</a></p>
         <form action="{{ url_for('delete_file', filename=video) }}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
           <input type="submit" value="Delete">
         </form>

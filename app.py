@@ -40,7 +40,7 @@ def index():
     if request.method == 'POST':
         video_url = request.form['text']
         try:
-            download_video(video_url, "static/videos")
+            download_video(video_url, VIDEO_DIR)
             return render_template('success.html')
         except Exception as e:
             error_msg = str(e)

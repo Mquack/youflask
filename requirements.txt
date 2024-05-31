@@ -1,3 +1,2 @@
 flask
-ytdlp
-os
+yt-dlp
